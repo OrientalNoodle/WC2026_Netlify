@@ -23,7 +23,8 @@
 ## Lưu ý
 
 - Firebase config hiện đang là placeholder. Thêm cấu hình thực tế nếu dùng Google login.
-- Dữ liệu trận đấu hiện đang được load từ file `public/matches.json`.
+- Dữ liệu trận đấu hiện đang được load từ file `public/matches.json` hoặc từ API bên ngoài nếu cấu hình `VITE_MATCHES_URL`.
+- App tự động refresh dữ liệu mỗi ngày vào 00:00:05 và có nút "Làm mới dữ liệu" để cập nhật thủ công.
 - Máy công ty có thể không cài Node; nên clone/copy code sang máy khác để chạy.
 
 ## Tiếp tục trên máy laptop ở nhà

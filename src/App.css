@@ -80,6 +80,20 @@
   color: #842029;
 }
 
+.matches-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.update-note {
+  color: #475569;
+  font-size: 0.95rem;
+}
+
 .matches-section {
   display: grid;
   gap: 16px;

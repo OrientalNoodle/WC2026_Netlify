@@ -33,20 +33,49 @@ function App() {
   const [matches, setMatches] = useState<MatchData[]>([])
   const [loadingMatches, setLoadingMatches] = useState(true)
   const [matchError, setMatchError] = useState<string | null>(null)
+  const [lastMatchUpdate, setLastMatchUpdate] = useState<string | null>(null)
+  const [refreshingMatches, setRefreshingMatches] = useState(false)
 
   useEffect(() => {
     saveBets(bets)
   }, [bets])
 
+  const loadMatches = async (showLoading = true) => {
+    setMatchError(null)
+    setRefreshingMatches(true)
+    if (showLoading) {
+      setLoadingMatches(true)
+    }
+
+    try {
+      const data = await fetchMatches()
+      setMatches(data)
+      setLastMatchUpdate(new Date().toLocaleString())
+    } catch (error) {
+      setMatchError(error instanceof Error ? error.message : 'Lỗi không xác định')
+    } finally {
+      setLoadingMatches(false)
+      setRefreshingMatches(false)
+    }
+  }
+
   useEffect(() => {
-    fetchMatches()
-      .then((data) => {
-        setMatches(data)
-      })
-      .catch((error) => {
-        setMatchError(error.message)
-      })
-      .finally(() => setLoadingMatches(false))
+    loadMatches()
+  }, [])
+
+  useEffect(() => {
+    const scheduleMidnightRefresh = () => {
+      const now = new Date()
+      const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5)
+      const delay = nextMidnight.getTime() - now.getTime()
+      return window.setTimeout(() => {
+        loadMatches(false)
+        scheduleMidnightRefresh()
+      }, delay)
+    }
+
+    const timer = scheduleMidnightRefresh()
+    return () => window.clearTimeout(timer)
   }, [])
 
   useEffect(() => {
@@ -62,6 +91,12 @@ function App() {
   }, [activeTab])
 
   const leaderboard = useMemo(() => buildLeaderboard(bets, matches), [bets, matches])
+
+  const handleRefreshMatches = () => {
+    if (!refreshingMatches) {
+      loadMatches(true)
+    }
+  }
 
   const handleBet = (matchId: string, teamKey: 'home' | 'away' | null) => {
     setBets((prev) => {
@@ -107,6 +142,12 @@ function App() {
         {activeTab === 'leaderboard' && <Leaderboard leaderboard={leaderboard} />}
         {activeTab === 'matches' && (
           <>
+            <div className="matches-header">
+              <button className="secondary-button" type="button" onClick={handleRefreshMatches} disabled={refreshingMatches}>
+                {refreshingMatches ? 'Đang làm mới...' : 'Làm mới dữ liệu'}
+              </button>
+              {lastMatchUpdate && <span className="update-note">Cập nhật lần cuối: {lastMatchUpdate}</span>}
+            </div>
             {loadingMatches && <div className="message-box">Đang tải danh sách trận...</div>}
             {matchError && <div className="message-box error">Lỗi tải trận: {matchError}</div>}
             {!loadingMatches && !matchError && matches.length === 0 && (
