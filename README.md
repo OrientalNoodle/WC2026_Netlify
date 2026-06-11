@@ -25,6 +25,33 @@
 - Firebase config hiện đang là placeholder. Thêm cấu hình thực tế nếu dùng Google login.
 - Máy công ty có thể không cài Node; nên clone/copy code sang máy khác để chạy.
 
+## Tiếp tục trên máy laptop ở nhà
+
+1. Mở laptop ở nhà, cài Node.js và npm nếu chưa có:
+   - Tải từ https://nodejs.org/ và cài bản LTS.
+2. Clone repo từ GitHub:
+   - `git clone https://github.com/OrientalNoodle/WC2026_Netlify.git`
+3. Vào thư mục project:
+   - `cd WC2026_Netlify`
+4. Cài dependencies:
+   - `npm install`
+5. Chạy app ở chế độ dev:
+   - `npm run dev`
+6. Mở trình duyệt theo địa chỉ in ra từ lệnh dev.
+
+### Nếu muốn tiếp tục code
+- Thay đổi file trong `src/`.
+- Thêm dữ liệu trận trong `src/data/matches.ts`.
+- Cập nhật logic trong `src/services/scoring.ts`.
+- Kiểm tra lại UI trong `src/components/`.
+
+### Khi muốn deploy sau khi sửa xong
+- `git add .`
+- `git commit -m "Update app logic / UI"`
+- `git push`
+
+GitHub Actions và Netlify sẽ tự chạy build lại khi push.
+
 ## Publish và deploy từ GitHub
 
 ### GitHub Pages
