@@ -10,20 +10,30 @@
   margin-top: 0;
 }
 
-.leaderboard-grid {
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr 1fr;
-  gap: 12px;
-  align-items: center;
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 18px;
 }
 
-.leaderboard-header {
-  font-weight: 700;
-  color: #334155;
+.leaderboard-table th,
+.leaderboard-table td {
+  text-align: left;
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.leaderboard-grid > div {
-  padding: 12px 0;
-  border-bottom: 1px solid #e2e8f0;
+.leaderboard-table th {
+  font-weight: 700;
+  color: #334155;
+  background: #f8fafc;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.leaderboard-table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid #cbd5e1;
 }

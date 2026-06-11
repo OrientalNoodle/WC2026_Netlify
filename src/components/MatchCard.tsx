@@ -38,12 +38,15 @@ export function MatchCard({ match, bet, disabled, onBet }: Props) {
         <button
           className={`team-button ${pickedAway ? 'selected' : ''}`}
           type="button"
-          disabled={disabled}
+          disabled={buttonDisabled}
           onClick={() => onBet(match.id, pickedAway ? null : 'away')}
         >
           {match.awayTeam}
         </button>
       </div>
+      {bet ? (
+        <div className="bet-summary">Bạn đang chọn: {bet.team === 'home' ? match.homeTeam : match.awayTeam}</div>
+      ) : null}
       <div className="match-footer">
         <span className="status-line">
           {matchLocked
