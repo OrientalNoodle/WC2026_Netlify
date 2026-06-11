@@ -1,0 +1,29 @@
+.leaderboard-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.04);
+}
+
+.leaderboard-panel h2 {
+  margin-top: 0;
+}
+
+.leaderboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.leaderboard-header {
+  font-weight: 700;
+  color: #334155;
+}
+
+.leaderboard-grid > div {
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
