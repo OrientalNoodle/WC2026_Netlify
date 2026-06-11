@@ -1,39 +1,72 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import { matches } from './data/matches'
 import { RulesPanel } from './components/RulesPanel'
-import { MatchCard } from './components/MatchCard'
+import { MatchList } from './components/MatchList'
+import { TabNav } from './components/TabNav'
 import { Leaderboard } from './components/Leaderboard'
 import { useAuth } from './services/firebase'
 import { buildLeaderboard } from './services/scoring'
+import { fetchMatches } from './services/matchService'
 import { loadBets, saveBets } from './services/storage'
-import type { MatchStage, UserBet } from './types'
+import type { MatchData, UserBet } from './types'
 
-const tabs: Array<{ key: 'matches' | 'leaderboard' | 'rules'; label: string }> = [
+const tabs = [
   { key: 'matches', label: 'Kèo & Trận' },
   { key: 'leaderboard', label: '🏆 Bảng điểm' },
   { key: 'rules', label: '📖 Luật chơi' }
-]
+] as const
+
+type TabKey = typeof tabs[number]['key']
+
+function getTabFromHash(hash: string | null): TabKey {
+  if (!hash) {
+    return 'matches'
+  }
+  const normalized = hash.replace('#', '') as TabKey
+  return tabs.some((tab) => tab.key === normalized) ? normalized : 'matches'
+}
 
 function App() {
   const { user, signIn, signOut } = useAuth()
-  const [activeTab, setActiveTab] = useState<'matches' | 'leaderboard' | 'rules'>('matches')
+  const [activeTab, setActiveTab] = useState<TabKey>(() => getTabFromHash(window.location.hash))
   const [bets, setBets] = useState<Record<string, UserBet>>(() => loadBets())
+  const [matches, setMatches] = useState<MatchData[]>([])
+  const [loadingMatches, setLoadingMatches] = useState(true)
+  const [matchError, setMatchError] = useState<string | null>(null)
 
   useEffect(() => {
     saveBets(bets)
   }, [bets])
 
-  const leaderboard = useMemo(() => buildLeaderboard(bets, matches), [bets])
+  useEffect(() => {
+    fetchMatches()
+      .then((data) => {
+        setMatches(data)
+      })
+      .catch((error) => {
+        setMatchError(error.message)
+      })
+      .finally(() => setLoadingMatches(false))
+  }, [])
+
+  useEffect(() => {
+    const handleHashChange = () => setActiveTab(getTabFromHash(window.location.hash))
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  useEffect(() => {
+    if (window.location.hash !== `#${activeTab}`) {
+      window.history.replaceState(null, '', `#${activeTab}`)
+    }
+  }, [activeTab])
+
+  const leaderboard = useMemo(() => buildLeaderboard(bets, matches), [bets, matches])
 
   const handleBet = (matchId: string, teamKey: 'home' | 'away' | null) => {
     setBets((prev) => {
       const current = prev[matchId]?.team
-      if (teamKey === null) {
-        const { [matchId]: removed, ...rest } = prev
-        return rest
-      }
-      if (current === teamKey) {
+      if (teamKey === null || current === teamKey) {
         const { [matchId]: removed, ...rest } = prev
         return rest
       }
@@ -67,35 +100,22 @@ function App() {
         </div>
       </header>
 
-      <nav className="tab-nav">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            className={activeTab === tab.key ? 'tab-button active' : 'tab-button'}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <TabNav active={activeTab} tabs={tabs} onChange={setActiveTab} />
 
       <main className="main-content">
         {activeTab === 'rules' && <RulesPanel />}
-
         {activeTab === 'leaderboard' && <Leaderboard leaderboard={leaderboard} />}
-
         {activeTab === 'matches' && (
-          <section className="matches-section">
-            {matches.map((match) => (
-              <MatchCard
-                key={match.id}
-                match={match}
-                bet={bets[match.id]}
-                disabled={!user}
-                onBet={handleBet}
-              />
-            ))}
-          </section>
+          <>
+            {loadingMatches && <div className="message-box">Đang tải danh sách trận...</div>}
+            {matchError && <div className="message-box error">Lỗi tải trận: {matchError}</div>}
+            {!loadingMatches && !matchError && matches.length === 0 && (
+              <div className="message-box">Không có trận nào để hiển thị.</div>
+            )}
+            {!loadingMatches && !matchError && matches.length > 0 && (
+              <MatchList matches={matches} bets={bets} disabled={!user} onBet={handleBet} />
+            )}
+          </>
         )}
       </main>
     </div>

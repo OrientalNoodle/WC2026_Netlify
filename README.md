@@ -23,6 +23,7 @@
 ## Lưu ý
 
 - Firebase config hiện đang là placeholder. Thêm cấu hình thực tế nếu dùng Google login.
+- Dữ liệu trận đấu hiện đang được load từ file `public/matches.json`.
 - Máy công ty có thể không cài Node; nên clone/copy code sang máy khác để chạy.
 
 ## Tiếp tục trên máy laptop ở nhà

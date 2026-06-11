@@ -65,6 +65,21 @@
   gap: 18px;
 }
 
+.message-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+  padding: 18px;
+  color: #1d4ed8;
+  text-align: center;
+}
+
+.message-box.error {
+  background: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
+}
+
 .matches-section {
   display: grid;
   gap: 16px;
