@@ -24,3 +24,25 @@
 
 - Firebase config hiện đang là placeholder. Thêm cấu hình thực tế nếu dùng Google login.
 - Máy công ty có thể không cài Node; nên clone/copy code sang máy khác để chạy.
+
+## Publish và deploy từ GitHub
+
+### GitHub Pages
+1. Đảm bảo repo đã có nội dung commit sẵn.
+2. Vào `Settings` của repo trên GitHub.
+3. Chọn `Pages` → `Deploy from a branch`.
+4. Chọn branch `main`, folder `/ (root)`.
+5. Lưu và chờ GitHub Actions build.
+
+App sẽ xuất hiện ở `https://OrientalNoodle.github.io/WC2026_Netlify/`.
+
+### Netlify
+1. Đăng nhập Netlify và chọn `New site from Git`.
+2. Kết nối GitHub và chọn repo `OrientalNoodle/WC2026_Netlify`.
+3. Build command: `npm run build`.
+4. Publish directory: `dist`.
+5. Deploy site.
+
+### Tự động deploy mỗi lần push
+- GitHub Actions đã được chuẩn bị để build và deploy lên GitHub Pages khi push lên `main`.
+- Bạn chỉ cần push code lên GitHub, GitHub sẽ tự động tạo site.
